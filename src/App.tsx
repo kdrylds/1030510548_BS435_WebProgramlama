@@ -1,13 +1,14 @@
 import './App.css'
-import realImage from './assets/realorrender.png'
-function App() {
 
+function App() {
   return (
-    <>
-     <div>
-      <img src={realImage} width="400" alt="Real or Render?" />
-     </div>
-    </>
+    <div className="app-container">
+      <div className="content-overlay">
+        <h1 className="title">Real or Render?</h1>
+        <p className="subtitle">Can you spot the difference?</p>
+        {/* Game content will go here */}
+      </div>
+    </div>
   )
 }
 
