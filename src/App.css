@@ -28,9 +28,10 @@
   color: #fff;
   text-align: center;
   font-family: "Orbitron", sans-serif;
+  background: rgba(5, 5, 5, 0.65);
 
   /* ✨ Opak arka plan */
-  background: #050505;              /* düz siyah */
+  /* background: #050505;              düz siyah */
   /* veya aşağıdakini istersen aktif edebilirsin: */
   /* background: linear-gradient(135deg, #0a0020, #001a33, #002f55); */
 
@@ -40,16 +41,117 @@
 
   box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
   text-shadow: 0 0 10px #00ffff;
+  max-width: 720px;
+  width: calc(100% - 3rem);
 }
 
-.content h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+/* başlık/subtitle */
+.title {
+  font-size: 2.4rem;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 1px;
+  color: #e6f7ff;
+  text-shadow: 0 0 12px rgba(0, 255, 255, 0.9);
 }
 
-.content p {
-  font-size: 1.25rem;
+.subtitle {
+  margin: 0 0 1.25rem 0;
+  color: #d6f0ff;
+  font-size: 1.05rem;
+  opacity: 0.95;
+}
+
+/* butonlar */
+.controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  min-width: 140px;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  color: #051018;
+}
+
+/* primary (Play) neon */
+.btn-primary {
+  background: linear-gradient(90deg, #00f0ff, #5b00ff);
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 6px 30px rgba(0, 160, 255, 0.18),
+    0 0 18px rgba(91, 0, 255, 0.12);
+  border: 1px solid rgba(0, 240, 255, 0.6);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 40px rgba(0, 160, 255, 0.25);
+}
+
+/* secondary (Settings) darker */
+.btn-secondary {
+  background: linear-gradient(90deg, #0a0a0a, #001a33);
+  color: #9be8ff;
+  border: 1px solid rgba(155, 232, 255, 0.12);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.6),
+    0 0 12px rgba(0, 255, 255, 0.03);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65);
+}
+
+/* meta (skor vb) */
+.meta {
+  margin-top: 1rem;
+  color: #bfefff;
+  font-size: 0.95rem;
   opacity: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* avatar shown under player name */
+.meta-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.06);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+.meta-avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.02);
+  color: #9bdcff;
+  font-size: 0.85rem;
+}
+
+/* erişilebilirlik */
+.btn:focus {
+  outline: 2px solid rgba(0, 255, 255, 0.18);
+  outline-offset: 2px;
 }
 
 /* 🔹 Neon parıltı efekti (isteğe bağlı) */
@@ -68,3 +170,273 @@
   mix-blend-mode: overlay;
   z-index: 0;
 }
+
+/* Settings modal */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  background: rgba(2, 6, 12, 0.6);
+  backdrop-filter: blur(4px) saturate(1.1);
+  padding: 1rem;
+}
+
+.settings-panel {
+  width: 100%;
+  max-width: 680px;
+  background: linear-gradient(180deg, rgba(3, 8, 18, 0.95), rgba(6, 12, 28, 0.95));
+  border: 1px solid rgba(0, 255, 255, 0.08);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 160, 255, 0.06);
+  border-radius: 12px;
+  padding: 1rem;
+  color: #e6f7ff;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #bfefff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* body fields */
+.settings-body {
+  display: grid;
+  gap: 0.9rem;
+  padding: 0.6rem 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field span {
+  font-size: 0.9rem;
+  color: #cfefff;
+}
+
+.field input[type="text"] {
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.45);
+  color: #eafcff;
+}
+
+.field input[type="range"] {
+  width: 100%;
+}
+
+.toggle-row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* avatar preview */
+.avatar-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-top: 0.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.avatar-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9bdcff;
+  background: rgba(255, 255, 255, 0.02);
+  margin-top: 0.4rem;
+  border: 1px dashed rgba(155, 232, 255, 0.06);
+}
+
+/* footer */
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+/* Theme previews in settings */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.theme-option {
+  display: block;
+  cursor: pointer;
+  user-select: none;
+}
+.theme-option input { display: none; }
+.theme-preview {
+  height: 44px;
+  border-radius: 8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color:#041018;
+  border: 2px solid rgba(255,255,255,0.04);
+}
+
+/* preview styles */
+.theme-preview.neon { background: linear-gradient(90deg,#00f0ff,#5b00ff); color:#fff; text-shadow:0 0 6px rgba(0,240,255,0.5); }
+.theme-preview.dark { background: linear-gradient(90deg,#0b0b0b,#1a2430); color:#cfe6ff; }
+.theme-preview.retro { background: linear-gradient(90deg,#ffcf5c,#ff6b6b); color:#1b1b1b; }
+
+/* active outline */
+.theme-option.active .theme-preview { box-shadow: 0 0 0 3px rgba(0,240,255,0.12) inset; transform: translateY(-2px); }
+
+/* Theme-specific root overrides */
+.app-container.theme-neon .content { border-color: #00ffff; box-shadow: 0 0 25px rgba(0,255,255,0.5); }
+.app-container.theme-dark .content { background: rgba(2,6,12,0.85); border-color: #6b6b6b; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+.app-container.theme-retro .content { background: linear-gradient(135deg, rgba(20,10,0,0.7), rgba(80,30,10,0.5)); border-color:#ffcf5c; box-shadow: 0 8px 30px rgba(255,110,80,0.12); }
+
+/* Buttons tweaks per theme */
+.app-container.theme-neon .btn-primary { background: linear-gradient(90deg,#00f0ff,#5b00ff); }
+.app-container.theme-dark .btn-primary { background: linear-gradient(90deg,#4b5563,#111827); color:#fff; }
+.app-container.theme-retro .btn-primary { background: linear-gradient(90deg,#ffcf5c,#ff6b6b); color:#1b1b1b; }
+
+/* Mode selection modal */
+.mode-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,12,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.mode-panel {
+  width: 100%;
+  max-width: 980px;
+  background: linear-gradient(180deg, rgba(6,10,18,0.96), rgba(10,16,28,0.96));
+  border-radius: 12px;
+  padding: 1rem;
+  color: #e6f7ff;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+
+.mode-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:0.6rem;
+}
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+}
+.mode-card {
+  display:flex;
+  flex-direction:column;
+  border-radius:10px;
+  overflow:hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  border:1px solid rgba(255,255,255,0.04);
+  cursor:pointer;
+  text-align:left;
+  padding:0;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.mode-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+/* mode-thumb: sabit yüksekliğe al ve img akış içinde yer alsın */
+.mode-thumb {
+  width: 100%;
+  /* sabit görünüm: her kartta aynı yükseklikte olacak */
+  height: 360px;        /* istediğin yüksekliği buradan ayarla */
+  max-height: 360px;
+  min-height: 140px;
+  display: block;
+  overflow: hidden;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.06));
+}
+
+/* img artık absolute değil, karta tam otursun */
+.mode-img {
+  position: static;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mode-body { padding: 0.75rem; }
+.mode-body h3 { margin:0 0 6px 0; font-size:1.05rem; }
+.mode-sub { font-size:0.85rem; color:#bfefff; margin-bottom:6px; }
+.mode-desc { margin:0; font-size:0.85rem; color:#cfefff; opacity:0.9; }
+
+/* küçük ekranlarda biraz daha uzun görseller */
+@media (max-width: 800px) {
+  .mode-thumb { aspect-ratio: 4 / 3; max-height: 240px; }
+}
+
+/* responsive */
+@media (max-width: 800px) {
+  .mode-grid { grid-template-columns: 1fr; }
+  .mode-thumb { height: 160px; }
+}
+
+/* ModeSelect tema stilleri - daha spesifik ve modal köküne uygulanır */
+.mode-modal.theme-neon .mode-panel,
+.mode-panel.theme-neon,
+.mode-modal.theme-neon {
+  border: 1px solid rgba(0, 240, 255, 0.12);
+  box-shadow: 0 14px 45px rgba(0, 180, 255, 0.08);
+  background: linear-gradient(180deg, rgba(3,8,18,0.98), rgba(6,12,28,0.95));
+}
+.mode-modal.theme-dark .mode-panel,
+.mode-panel.theme-dark,
+.mode-modal.theme-dark {
+  border: 1px solid rgba(150,150,150,0.06);
+  background: linear-gradient(180deg, rgba(8,10,14,0.98), rgba(12,16,22,0.98));
+}
+.mode-modal.theme-retro .mode-panel,
+.mode-panel.theme-retro,
+.mode-modal.theme-retro {
+  border: 1px solid rgba(255,204,92,0.12);
+  background: linear-gradient(180deg, rgba(30,18,6,0.95), rgba(60,30,12,0.92));
+}
+
+/* kart vurgu renkleri */
+.mode-card.theme-neon { border-color: rgba(0,200,255,0.06); }
+.mode-card.theme-neon:hover { box-shadow: 0 12px 36px rgba(0,200,255,0.12); }
+
+.mode-card.theme-dark { border-color: rgba(255,255,255,0.03); }
+.mode-card.theme-dark:hover { box-shadow: 0 12px 36px rgba(0,0,0,0.6); }
+
+.mode-card.theme-retro { border-color: rgba(255,160,60,0.06); }
+.mode-card.theme-retro:hover { box-shadow: 0 12px 36px rgba(255,140,60,0.12); }
