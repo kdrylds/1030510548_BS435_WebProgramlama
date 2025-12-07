@@ -1,4 +1,13 @@
-import type { SettingsData } from "../settingsConfig";
+import type { SettingsData } from "./settingsConfig";
+
+export type GameMode = "easy" | "normal" | "hard";
+
+export interface LeaderboardEntry {
+  mode: GameMode;
+  playerName: string;
+  score: number;
+  timestamp: number;
+}
 
 /** Simple image compressor (dataURL -> jpeg) */
 export async function compressDataUrl(dataUrl: string, maxBytes = 150_000): Promise<string> {
@@ -48,4 +57,42 @@ export async function saveSettingsSafely(s: SettingsData) {
       return { saved: false };
     }
   }
+}
+
+/** Get all leaderboard entries */
+export function getLeaderboard(): LeaderboardEntry[] {
+  try {
+    const data = localStorage.getItem("game-leaderboard");
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Save a new score to leaderboard */
+export function saveScore(mode: GameMode, playerName: string, score: number) {
+  try {
+    const entries = getLeaderboard();
+    entries.push({
+      mode,
+      playerName,
+      score,
+      timestamp: Date.now(),
+    });
+    // Keep top 100 scores only
+    entries.sort((a, b) => b.score - a.score);
+    const trimmed = entries.slice(0, 100);
+    localStorage.setItem("game-leaderboard", JSON.stringify(trimmed));
+  } catch {
+    // Ignore quota errors
+  }
+}
+
+/** Get top scores for a specific mode */
+export function getTopScoresForMode(mode: GameMode, limit = 5): LeaderboardEntry[] {
+  const all = getLeaderboard();
+  return all
+    .filter((e) => e.mode === mode)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit);
 }

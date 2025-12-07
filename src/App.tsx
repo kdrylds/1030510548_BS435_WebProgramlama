@@ -1,13 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
-import Settings from "./Settings";
-import Controls from "./components/Controls";
-import MetaInfo from "./components/MetaInfo";
+import Settings from "./screens/Settings/Settings";
+import MainMenu from "./screens/MainMenu/MainMenu";
+import ModeSelect from "./screens/ModeSelect/ModeSelect";
+import EasyMode from "./screens/Game/EasyMode/EasyMode";
+import NormalMode from "./screens/Game/NormalMode/NormalMode";
+import HardMode from "./screens/Game/HardMode/HardMode";
+import Leaderboard from "./screens/Leaderboard/Leaderboard";
 import AudioManager from "./audio/AudioManager";
 import { saveSettingsSafely } from "./utils/storage";
-import type { SettingsData } from "./settingsConfig";
-import { DEFAULT_SETTINGS } from "./settingsConfig";
-import ModeSelect from "./components/ModeSelect";
+import type { SettingsData } from "./utils/settingsConfig";
+import { DEFAULT_SETTINGS } from "./utils/settingsConfig";
+
+type ModeKey = "easy" | "normal" | "hard";
 
 // use URL(...) to avoid Vite import resolution edge-cases
 const videoBg = new URL("./assets/cyberpunk.mp4", import.meta.url).href;
@@ -18,6 +23,8 @@ const App: React.FC = () => {
   const [settings, setSettings] = useState<SettingsData>(DEFAULT_SETTINGS);
   const [showSettings, setShowSettings] = useState(false);
   const [showModeSelect, setShowModeSelect] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [currentMode, setCurrentMode] = useState<ModeKey | null>(null);
   const audioRef = useRef<AudioManager | null>(null);
 
   useEffect(() => {
@@ -45,9 +52,21 @@ const App: React.FC = () => {
   const handleSave = async (s: SettingsData) => {
     playClick();
     const res = await saveSettingsSafely(s);
-    // update in-memory settings with whatever got stored
     setSettings((_) => ({ ...DEFAULT_SETTINGS, ...s, avatarDataUrl: res.stored?.avatarDataUrl ?? "" }));
     setShowSettings(false);
+  };
+
+  const handleOpenSettings = () => {
+    playClick();
+    // Settings açılırken localStorage'dan güncel veriyi oku
+    try {
+      const raw = localStorage.getItem("game-settings");
+      if (raw) {
+        const stored = JSON.parse(raw);
+        setSettings((prev) => ({ ...prev, ...stored }));
+      }
+    } catch {}
+    setShowSettings(true);
   };
 
   return (
@@ -57,25 +76,28 @@ const App: React.FC = () => {
       </video>
 
       <div className="content">
-        <h1 className="title">⚡ ⚡</h1>
-        <p className="subtitle">Are you ready to uncover the secrets?</p>
-
-        <Controls
+        <MainMenu
+          settings={settings}
           onPlay={() => {
             playClick();
             setShowModeSelect(true);
           }}
           onOpenSettings={() => {
+            handleOpenSettings();
+          }}
+          onOpenLeaderboard={() => {
             playClick();
-            setShowSettings(true);
+            setShowLeaderboard(true);
           }}
         />
-
-        <MetaInfo settings={settings} />
       </div>
 
       {showSettings && (
         <Settings initial={settings} onSave={handleSave} onClose={() => setShowSettings(false)} playClick={playClick} />
+      )}
+
+      {showLeaderboard && (
+        <Leaderboard settings={settings} onClose={() => setShowLeaderboard(false)} />
       )}
 
       {showModeSelect && (
@@ -85,12 +107,23 @@ const App: React.FC = () => {
           playClick={playClick}
           onClose={() => setShowModeSelect(false)}
           onSelect={(mode) => {
-            // seçime göre oyun başlatma logic'i buraya konacak
-            console.log("Selected mode:", mode);
+            playClick();
+            setCurrentMode(mode);
             setShowModeSelect(false);
-            // TODO: route / start game with mode
           }}
         />
+      )}
+
+      {currentMode === "easy" && (
+        <EasyMode settings={settings} playClick={playClick} onExit={() => setCurrentMode(null)} />
+      )}
+
+      {currentMode === "normal" && (
+        <NormalMode settings={settings} onExit={() => setCurrentMode(null)} />
+      )}
+
+      {currentMode === "hard" && (
+        <HardMode settings={settings} onExit={() => setCurrentMode(null)} />
       )}
     </div>
   );
