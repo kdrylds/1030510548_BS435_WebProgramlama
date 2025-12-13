@@ -1,9 +1,19 @@
-const aiImageImports = import.meta.glob("../assets/ai-images/*.{webp,png,jpg,jpeg}", {
-  eager: true,
-  import: "default",
-});
+const croppedAiImports = import.meta.glob(
+  "../assets/ai-images/_cropped/*.{webp,png,jpg,jpeg}",
+  { eager: true, import: "default" }
+);
 
-const aiImageUrls: string[] = Object.values(aiImageImports) as string[];
+const originalAiImports = import.meta.glob(
+  "../assets/ai-images/*.{webp,png,jpg,jpeg}",
+  { eager: true, import: "default" }
+);
+
+// Önce _cropped klasörünü kullan, yoksa orijinal dosyalara geri dön
+const aiImagePool: string[] = (() => {
+  const cropped = Object.values(croppedAiImports) as string[];
+  if (cropped.length > 0) return cropped;
+  return Object.values(originalAiImports) as string[];
+})();
 
 export type GameImage = {
   id: number;
@@ -12,12 +22,12 @@ export type GameImage = {
 };
 
 export function pickRandomImages(count: number): GameImage[] {
-  if (aiImageUrls.length === 0) {
-    console.warn("No AI images found in assets/ai-images");
+  if (aiImagePool.length === 0) {
+    console.warn("No AI images found in assets/ai-images (or _cropped)");
     return [];
   }
 
-  const shuffled = [...aiImageUrls]
+  const shuffled = [...aiImagePool]
     .map((src) => ({ src, sort: Math.random() }))
     .sort((a, b) => a.sort - b.sort)
     .slice(0, count)
@@ -31,13 +41,13 @@ export function pickRandomImages(count: number): GameImage[] {
 }
 
 export function pickEasySet(): GameImage[] {
-  if (aiImageUrls.length === 0) {
-    console.warn("No AI images found in assets/ai-images");
+  if (aiImagePool.length === 0) {
+    console.warn("No AI images found in assets/ai-images (or _cropped)");
   }
 
   // 1 adet AI + 2 adet Picsum (gerçek görünüm için)
-  const aiSrc = aiImageUrls.length > 0
-    ? aiImageUrls[Math.floor(Math.random() * aiImageUrls.length)]
+  const aiSrc = aiImagePool.length > 0
+    ? aiImagePool[Math.floor(Math.random() * aiImagePool.length)]
     : "";
 
   const picsumImages: GameImage[] = Array.from({ length: 2 }).map((_, idx) => {
@@ -64,13 +74,13 @@ export function pickEasySet(): GameImage[] {
 }
 
 export function pickNormalSet(): GameImage[] {
-  if (aiImageUrls.length === 0) {
-    console.warn("No AI images found in assets/ai-images");
+  if (aiImagePool.length === 0) {
+    console.warn("No AI images found in assets/ai-images (or _cropped)");
   }
 
   // 1 adet AI + 4 adet Picsum (gerçek görünüm için)
-  const aiSrc = aiImageUrls.length > 0
-    ? aiImageUrls[Math.floor(Math.random() * aiImageUrls.length)]
+  const aiSrc = aiImagePool.length > 0
+    ? aiImagePool[Math.floor(Math.random() * aiImagePool.length)]
     : "";
 
   const picsumImages: GameImage[] = Array.from({ length: 4 }).map((_, idx) => {
@@ -97,13 +107,13 @@ export function pickNormalSet(): GameImage[] {
 }
 
 export function pickHardSet(): GameImage[] {
-  if (aiImageUrls.length === 0) {
-    console.warn("No AI images found in assets/ai-images");
+  if (aiImagePool.length === 0) {
+    console.warn("No AI images found in assets/ai-images (or _cropped)");
   }
 
   // 1 adet AI + 4 adet Picsum (gerçek görünüm için)
-  const aiSrc = aiImageUrls.length > 0
-    ? aiImageUrls[Math.floor(Math.random() * aiImageUrls.length)]
+  const aiSrc = aiImagePool.length > 0
+    ? aiImagePool[Math.floor(Math.random() * aiImagePool.length)]
     : "";
 
   const picsumImages: GameImage[] = Array.from({ length: 4 }).map((_, idx) => {
